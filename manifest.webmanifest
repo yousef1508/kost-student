@@ -1,0 +1,10 @@
+{
+  "name": "KOST Student",
+  "short_name": "KOST",
+  "description": "Personlig matplanlegging og matbudsjett",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#fff9ef",
+  "theme_color": "#fff9ef",
+  "lang": "no"
+}

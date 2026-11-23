@@ -1,0 +1,9 @@
+const test=require("node:test"),assert=require("node:assert/strict"),fs=require("node:fs"),vm=require("node:vm");
+const context=vm.createContext({DEFAULT_MONTHLY_BUDGET:2000});
+vm.runInContext(`${fs.readFileSync("src/domain/budget-engine.js","utf8")}\\nglobalThis.api={normalizeMonthlyBudget,budgetForDays,dailyBudgetFor,budgetStatus};`,context);
+const api=context.api;
+test("default is a fallback, not a cap",()=>{assert.equal(api.normalizeMonthlyBudget(undefined),2000);assert.equal(api.normalizeMonthlyBudget(18000),18000);assert.equal(api.normalizeMonthlyBudget(250000),250000);});
+test("accepts any positive user-set budget",()=>{for(const n of [1,500,1500,2000,3500,9999,10000,25000,1000000])assert.equal(api.normalizeMonthlyBudget(n),n);});
+test("accepts Norwegian decimal comma and rounds to øre",()=>{assert.equal(api.normalizeMonthlyBudget("1250,50"),1250.5);assert.equal(api.normalizeMonthlyBudget("1250.555"),1250.56);});
+test("derives daily and weekly caps from the chosen monthly amount",()=>{assert.equal(api.dailyBudgetFor(3000),100);assert.equal(api.budgetForDays(3000,7),700);assert.equal(api.budgetForDays(1500,14),700);assert.equal(api.budgetForDays(25000,30),25000);});
+test("reports remaining and overspend accurately",()=>{assert.deepEqual(JSON.parse(JSON.stringify(api.budgetStatus(600,700))),{within:true,remaining:100,over:0,difference:100});assert.deepEqual(JSON.parse(JSON.stringify(api.budgetStatus(825,700))),{within:false,remaining:0,over:125,difference:-125});});

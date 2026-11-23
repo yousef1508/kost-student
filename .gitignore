@@ -1,30 +1,6 @@
-# Operating system files
-.DS_Store
-Thumbs.db
-Desktop.ini
-
-# Editors and IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Local configuration and secrets
-.env
-.env.*
-!.env.example
-
-# Dependencies and build output (for future tooling)
 node_modules/
 dist/
 coverage/
-
-# Logs and temporary files
 *.log
-*.tmp
-
-# Android build artifacts (if native packaging is added later)
-.gradle/
-build/
-*.apk
-*.aab
+.DS_Store
+Thumbs.db

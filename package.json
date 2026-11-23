@@ -1,0 +1,15 @@
+{
+  "name": "kost-student",
+  "version": "23.0.0",
+  "private": true,
+  "description": "Modular KOST Student meal planning prototype",
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/check.mjs",
+    "test": "node --test tests/*.test.cjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
