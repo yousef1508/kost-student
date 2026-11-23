@@ -1,1 +1,19 @@
-import fs from "node:fs";import path from "node:path";import {spawnSync} from "node:child_process";const files=[];function walk(dir){for(const e of fs.readdirSync(dir,{withFileTypes:true})){const f=path.join(dir,e.name);if(e.isDirectory())walk(f);else if(/\\.(?:js|mjs|cjs)$/.test(e.name))files.push(f);}}for(const d of ["src","scripts","tests"])if(fs.existsSync(d))walk(d);let failed=false;for(const f of files){const r=spawnSync(process.execPath,["--check",f],{encoding:"utf8"});if(r.status!==0){failed=true;process.stderr.write(`\\n${f}\\n${r.stderr}`);}}if(failed)process.exit(1);console.log(`Syntax check passed for ${files.length} JavaScript files.`);
+import fs from "node:fs";
+import path from "node:path";
+import { spawnSync } from "node:child_process";
+const files=[];
+function walk(dir){
+ for(const entry of fs.readdirSync(dir,{withFileTypes:true})){
+  const full=path.join(dir,entry.name);
+  if(entry.isDirectory())walk(full);
+  else if([".js",".mjs",".cjs"].includes(path.extname(entry.name)))files.push(full);
+ }
+}
+for(const dir of ["src","scripts","tests"])if(fs.existsSync(dir))walk(dir);
+let failed=false;
+for(const file of files){
+ const result=spawnSync(process.execPath,["--check",file],{encoding:"utf8"});
+ if(result.status!==0){failed=true;process.stderr.write("\n"+file+"\n"+result.stderr);}
+}
+if(failed)process.exit(1);
+console.log("Syntax check passed for "+files.length+" JavaScript files.");

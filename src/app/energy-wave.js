@@ -94,5 +94,3 @@ function initEnergyWave(){
  }
  waveFrame=requestAnimationFrame(renderWave);
 }
-
-function render(keepScroll=false){const top=keepScroll?frame.scrollTop:0;document.documentElement.dataset.theme=state.theme||'light';document.documentElement.lang=state.lang==='en'?'en':'nb';const meta=document.querySelector('meta[name=theme-color]');if(meta)meta.setAttribute('content',state.theme==='dark'?'#091314':'#f7f5fb');device.querySelector('.nav')?.remove();device.querySelector('.toast')?.remove();frame.innerHTML=state.onboardingDone?`<div class="page page-${state.page}">${({today,week,recipes,recipe,miniRecipe,cook:cooking,shop:shopV12,deals,pantry,budget,settings})[state.page]?.()||today()}</div>`:onboarding();if(state.onboardingDone&&!['recipe','cook','miniRecipe'].includes(state.page))device.insertAdjacentHTML('beforeend',nav());if(state.onboardingDone&&state.page==='recipes')updateRecipeResults();if(typeof localizeDOM==='function')localizeDOM(device);frame.scrollTop=keepScroll?top:0;save();initEnergyWave();}

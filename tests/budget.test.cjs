@@ -1,6 +1,10 @@
-const test=require("node:test"),assert=require("node:assert/strict"),fs=require("node:fs"),vm=require("node:vm");
+const test=require("node:test");
+const assert=require("node:assert/strict");
+const fs=require("node:fs");
+const vm=require("node:vm");
 const context=vm.createContext({DEFAULT_MONTHLY_BUDGET:2000});
-vm.runInContext(`${fs.readFileSync("src/domain/budget-engine.js","utf8")}\\nglobalThis.api={normalizeMonthlyBudget,budgetForDays,dailyBudgetFor,budgetStatus};`,context);
+const source=fs.readFileSync("src/domain/budget-engine.js","utf8");
+vm.runInContext(source+"\n"+"globalThis.api={normalizeMonthlyBudget,budgetForDays,dailyBudgetFor,budgetStatus};",context);
 const api=context.api;
 test("default is a fallback, not a cap",()=>{assert.equal(api.normalizeMonthlyBudget(undefined),2000);assert.equal(api.normalizeMonthlyBudget(18000),18000);assert.equal(api.normalizeMonthlyBudget(250000),250000);});
 test("accepts any positive user-set budget",()=>{for(const n of [1,500,1500,2000,3500,9999,10000,25000,1000000])assert.equal(api.normalizeMonthlyBudget(n),n);});

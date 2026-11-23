@@ -1,3 +1,4 @@
+function render(keepScroll=false){const top=keepScroll?frame.scrollTop:0;document.documentElement.dataset.theme=state.theme||'light';document.documentElement.lang=state.lang==='en'?'en':'nb';const meta=document.querySelector('meta[name=theme-color]');if(meta)meta.setAttribute('content',state.theme==='dark'?'#091314':'#f7f5fb');device.querySelector('.nav')?.remove();device.querySelector('.toast')?.remove();frame.innerHTML=state.onboardingDone?`<div class="page page-${state.page}">${({today,week,recipes,recipe,miniRecipe,cook:cooking,shop:shopV12,deals,pantry,budget,settings})[state.page]?.()||today()}</div>`:onboarding();if(state.onboardingDone&&!['recipe','cook','miniRecipe'].includes(state.page))device.insertAdjacentHTML('beforeend',nav());if(state.onboardingDone&&state.page==='recipes')updateRecipeResults();if(typeof localizeDOM==='function')localizeDOM(device);frame.scrollTop=keepScroll?top:0;save();initEnergyWave();}
 /* KOST app rendering and event handlers. */
 function openRecipe(id){state.recipeId=id;state.ingredientChecked=[];navigate('recipe');}
 function addMissingToShopping(){const list=missing(meal(state.recipeId));const added=list.filter(i=>!item(i.id)?.list&&!state.extras.includes(i.id));state.extras.push(...added.map(i=>i.id));announce(state.lang==='en'?`${list.length} ${list.length===1?'item':'items'} on your shopping list`:`${list.length} ${list.length===1?'vare':'varer'} i handlelisten`);save();}
@@ -30,7 +31,7 @@ function doAction(action){
  }
  if(action==='settings-cal-auto'||action==='settings-protein-auto'){
    if(!readProfile('settings')){announce(say('Sjekk profilfeltene.','Check your profile fields.'));return;}
-   state.monthlyBudget=numeric('monthly-budget',500,10000,state.monthlyBudget);
+   state.monthlyBudget=normalizeMonthlyBudget(numeric('monthly-budget',1,Infinity,state.monthlyBudget));
    const isCal=action==='settings-cal-auto';state.profile[isCal?'customCalorie':'customProtein']=false;fillTargetsFromProfile();updateDailyGoals();return;
  }
  if(action.startsWith('recipe:'))return openRecipe(action.split(':')[1]);if(['today','week','recipes','recipe','shop','pantry','deals','budget','settings'].includes(action))return navigate(action);
